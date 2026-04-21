@@ -239,6 +239,18 @@
     .ctx-item:hover { background: #222; }
     .ctx-item.danger { color: #ff4444; }
 
+  /* paused badge */
+  .paused-badge {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,.8);
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 10px;
+    color: #888;
+    letter-spacing: 1px;
+  }
+
     /* ── DETAIL SCREEN ── */
     #detail-screen { display: none; }
     .detail-header {
@@ -408,6 +420,7 @@
 <div class="ctx-menu" id="ctx-menu">
   <div class="ctx-item" onclick="ctxDownload()">📥 CSV 다운로드</div>
   <div class="ctx-item" onclick="ctxDetail()">📊 통계 보기</div>
+  <div class="ctx-item" id="ctx-pause-btn" onclick="ctxPause()">⏸ 모니터링 중지</div>
   <div class="ctx-item danger" onclick="ctxDelete()">🗑 영상 삭제</div>
 </div>
 
@@ -495,18 +508,19 @@
     area.innerHTML = `<div class="grid">${videos.map(v => `
       <div class="card" data-id="${v.video_id}" onclick="openDetail('${v.video_id}')" oncontextmenu="openCtx(event,'${v.video_id}')">
         <div class="thumb-wrap">
-          <img src="${v.thumbnail}" alt="" loading="lazy" />
+          <img src="${v.thumbnail}" alt="" loading="lazy" style="${v.paused ? 'filter:grayscale(1);opacity:.5' : ''}" />
           <div class="thumb-overlay">▶</div>
+          ${v.paused ? '<div class="paused-badge">⏸ 일시정지</div>' : ''}
         </div>
         <div class="card-body">
-          <div class="card-title">${v.title}</div>
+          <div class="card-title" style="${v.paused ? 'color:#555' : ''}">${v.title}</div>
           <div class="card-channel">${v.channel}</div>
           <div class="card-stats">
             <span style="color:#ff2020">👁 ${fmt(v.views)}</span>
             <span style="color:#ff6b6b">♥ ${fmt(v.likes)}</span>
             <span style="color:#ffd93d">💬 ${fmt(v.comments)}</span>
           </div>
-          <div class="card-updated">업데이트: ${v.last_updated ? fmtDate(v.last_updated) : '—'}</div>
+          <div class="card-updated">${v.paused ? '⏸ 수집 중지됨' : '업데이트: ' + (v.last_updated ? fmtDate(v.last_updated) : '—')}</div>
         </div>
       </div>`).join('')}</div>`;
   }
@@ -632,6 +646,8 @@
   function openCtx(e, videoId) {
     e.preventDefault();
     ctxTarget = videos.find(v => v.video_id === videoId);
+    const btn = document.getElementById('ctx-pause-btn');
+    btn.textContent = ctxTarget && ctxTarget.paused ? '▶ 모니터링 재개' : '⏸ 모니터링 중지';
     const menu = document.getElementById('ctx-menu');
     menu.style.top = e.clientY + 'px';
     menu.style.left = e.clientX + 'px';
@@ -656,6 +672,17 @@
     closeCtx();
     if (!ctxTarget || !confirm(`"${ctxTarget.title}" 영상을 삭제할까요?`)) return;
     await fetch(`${SERVER}/videos/${ctxTarget.video_id}`, {method:'DELETE'});
+    loadVideos();
+  }
+  async function ctxPause() {
+    closeCtx();
+    if (!ctxTarget) return;
+    const newPaused = !ctxTarget.paused;
+    await fetch(SERVER+'/videos/'+ctxTarget.video_id+'/pause', {
+      method: 'PATCH',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({paused: newPaused})
+    });
     loadVideos();
   }
   function closeCtx() { document.getElementById('ctx-menu').classList.remove('show'); }
