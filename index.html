@@ -8,333 +8,82 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --red: #ff2020;
-      --red-dim: #a01010;
-      --bg: #080808;
-      --bg2: #0f0f0f;
-      --bg3: #161616;
-      --border: #1e1e1e;
-      --text: #e0e0e0;
-      --muted: #555;
-      --yellow: #ffd93d;
-      --pink: #ff6b6b;
+      --red: #ff2020; --red-dim: #a01010; --bg: #080808; --bg2: #0f0f0f;
+      --bg3: #161616; --border: #1e1e1e; --text: #e0e0e0; --muted: #555;
+      --yellow: #ffd93d; --pink: #ff6b6b;
     }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Mono', monospace;
-      min-height: 100vh;
-    }
-
-    /* ── SETUP SCREEN ── */
-    #setup-screen {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 24px;
-    }
-    .setup-card {
-      max-width: 460px;
-      width: 100%;
-      text-align: center;
-    }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; }
+    #setup-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+    .setup-card { max-width: 460px; width: 100%; text-align: center; }
     .setup-logo { font-size: 64px; color: var(--red); margin-bottom: 16px; }
-    .setup-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 48px;
-      letter-spacing: 2px;
-      margin-bottom: 8px;
-    }
+    .setup-title { font-family: 'Bebas Neue', sans-serif; font-size: 48px; letter-spacing: 2px; margin-bottom: 8px; }
     .setup-sub { color: var(--muted); font-size: 13px; margin-bottom: 32px; }
-    .setup-input {
-      width: 100%;
-      padding: 14px 16px;
-      background: var(--bg2);
-      border: 1px solid #2a2a2a;
-      border-radius: 8px;
-      color: #fff;
-      font-family: 'DM Mono', monospace;
-      font-size: 13px;
-      outline: none;
-      margin-bottom: 12px;
-      transition: border-color .2s;
-    }
+    .setup-input { width: 100%; padding: 14px 16px; background: var(--bg2); border: 1px solid #2a2a2a; border-radius: 8px; color: #fff; font-family: 'DM Mono', monospace; font-size: 13px; outline: none; margin-bottom: 12px; transition: border-color .2s; }
     .setup-input:focus { border-color: var(--red); }
-    .setup-btn {
-      width: 100%;
-      padding: 14px;
-      background: var(--red);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 20px;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: background .2s;
-    }
+    .setup-btn { width: 100%; padding: 14px; background: var(--red); border: none; border-radius: 8px; color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; cursor: pointer; transition: background .2s; }
     .setup-btn:hover { background: #cc0000; }
     .setup-hint { color: #333; font-size: 11px; margin-top: 16px; }
-
-    /* ── MAIN APP ── */
     #app { display: none; flex-direction: column; min-height: 100vh; }
-
-    /* topbar */
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 24px;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      background: var(--bg);
-      z-index: 100;
-    }
-    .logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 28px;
-      letter-spacing: 2px;
-    }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 100; }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; }
     .logo span { color: var(--red); }
     .top-actions { display: flex; gap: 8px; }
-    .btn-ghost {
-      padding: 6px 14px;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--muted);
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      cursor: pointer;
-      transition: all .2s;
-    }
+    .btn-ghost { padding: 6px 14px; background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; transition: all .2s; }
     .btn-ghost:hover { border-color: #444; color: var(--text); }
-
-    /* add row */
-    .add-row {
-      display: flex;
-      gap: 8px;
-      padding: 16px 24px;
-      border-bottom: 1px solid #111;
-    }
-    .add-input {
-      flex: 1;
-      padding: 10px 14px;
-      background: var(--bg2);
-      border: 1px solid #2a2a2a;
-      border-radius: 8px;
-      color: #fff;
-      font-family: 'DM Mono', monospace;
-      font-size: 13px;
-      outline: none;
-      transition: border-color .2s;
-    }
+    .add-row { display: flex; gap: 8px; padding: 16px 24px; border-bottom: 1px solid #111; }
+    .add-input { flex: 1; padding: 10px 14px; background: var(--bg2); border: 1px solid #2a2a2a; border-radius: 8px; color: #fff; font-family: 'DM Mono', monospace; font-size: 13px; outline: none; transition: border-color .2s; }
     .add-input:focus { border-color: var(--red); }
-    .add-btn {
-      padding: 10px 20px;
-      background: var(--red);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 18px;
-      letter-spacing: 1px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background .2s;
-    }
+    .add-btn { padding: 10px 20px; background: var(--red); border: none; border-radius: 8px; color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; cursor: pointer; white-space: nowrap; transition: background .2s; }
     .add-btn:hover { background: #cc0000; }
     .add-btn:disabled { background: #333; cursor: not-allowed; }
-
-    /* error */
-    .error-bar {
-      margin: 8px 24px;
-      padding: 10px 14px;
-      background: #1a0000;
-      border: 1px solid #ff4444;
-      border-radius: 8px;
-      color: #ff6666;
-      font-size: 12px;
-    }
-
-    /* grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-      padding: 20px 24px;
-    }
-    .card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: border-color .2s, transform .15s;
-      position: relative;
-    }
+    .error-bar { margin: 8px 24px; padding: 10px 14px; background: #1a0000; border: 1px solid #ff4444; border-radius: 8px; color: #ff6666; font-size: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; padding: 20px 24px; }
+    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color .2s, transform .15s; position: relative; }
     .card:hover { border-color: var(--red); transform: translateY(-2px); }
     .thumb-wrap { position: relative; aspect-ratio: 16/9; overflow: hidden; }
     .thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .thumb-overlay {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0);
-      color: transparent;
-      font-size: 40px;
-      transition: all .2s;
-    }
+    .thumb-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0); color: transparent; font-size: 40px; transition: all .2s; }
     .card:hover .thumb-overlay { background: rgba(0,0,0,.4); color: #fff; }
     .card-body { padding: 12px 14px 14px; }
-    .card-title {
-      font-size: 13px; font-weight: 500; line-height: 1.4;
-      margin-bottom: 4px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
+    .card-title { font-size: 13px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .card-channel { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
     .card-stats { display: flex; gap: 12px; font-size: 12px; margin-bottom: 6px; }
     .card-updated { font-size: 10px; color: #333; }
-
-    /* empty */
     .empty { text-align: center; padding: 80px 24px; color: #333; }
     .empty-icon { font-size: 56px; margin-bottom: 16px; }
-
-    /* footer */
-    .footer {
-      text-align: center; padding: 16px;
-      color: #222; font-size: 11px;
-      border-top: 1px solid #111;
-      margin-top: auto;
-    }
-
-    /* context menu */
-    .ctx-menu {
-      position: fixed;
-      background: #141414;
-      border: 1px solid #2a2a2a;
-      border-radius: 8px;
-      padding: 4px;
-      z-index: 9999;
-      min-width: 160px;
-      box-shadow: 0 8px 32px rgba(0,0,0,.8);
-      display: none;
-    }
+    .footer { text-align: center; padding: 16px; color: #222; font-size: 11px; border-top: 1px solid #111; margin-top: auto; }
+    .ctx-menu { position: fixed; background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 4px; z-index: 9999; min-width: 160px; box-shadow: 0 8px 32px rgba(0,0,0,.8); display: none; }
     .ctx-menu.show { display: block; }
-    .ctx-item {
-      padding: 8px 14px;
-      font-size: 13px;
-      cursor: pointer;
-      border-radius: 5px;
-      color: #ddd;
-      transition: background .1s;
-    }
+    .ctx-item { padding: 8px 14px; font-size: 13px; cursor: pointer; border-radius: 5px; color: #ddd; transition: background .1s; }
     .ctx-item:hover { background: #222; }
     .ctx-item.danger { color: #ff4444; }
-
-  /* paused badge */
-  .paused-badge {
-    position: absolute; top: 8px; right: 8px;
-    background: rgba(0,0,0,.8);
-    border: 1px solid #444;
-    border-radius: 4px;
-    padding: 2px 7px;
-    font-size: 10px;
-    color: #888;
-    letter-spacing: 1px;
-  }
-
-    /* ── DETAIL SCREEN ── */
+    .paused-badge { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,.8); border: 1px solid #444; border-radius: 4px; padding: 2px 7px; font-size: 10px; color: #888; letter-spacing: 1px; }
     #detail-screen { display: none; }
-    .detail-header {
-      padding: 16px 24px;
-      border-bottom: 1px solid var(--border);
-      position: sticky; top: 0;
-      background: var(--bg); z-index: 10;
-    }
-    .back-btn {
-      background: none; border: none; color: var(--muted);
-      cursor: pointer; font-family: 'DM Mono', monospace;
-      font-size: 12px; padding: 0; margin-bottom: 6px;
-      display: block;
-    }
+    .detail-header { padding: 16px 24px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 10; }
+    .back-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-family: 'DM Mono', monospace; font-size: 12px; padding: 0; margin-bottom: 6px; display: block; }
     .back-btn:hover { color: var(--text); }
     .detail-title { font-size: 16px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
     .detail-channel { font-size: 12px; color: var(--muted); }
-
     .stat-row { display: flex; gap: 12px; padding: 16px 24px; }
-    .stat-card {
-      flex: 1; background: var(--bg2);
-      border: 1px solid; border-radius: 10px;
-      padding: 14px; text-align: center;
-    }
+    .stat-card { flex: 1; background: var(--bg2); border: 1px solid; border-radius: 10px; padding: 14px; text-align: center; }
     .stat-val { font-size: 22px; font-weight: 500; margin-bottom: 4px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; }
     .stat-label { font-size: 11px; color: var(--muted); }
-
-    .chart-box {
-      margin: 0 24px 16px;
-      background: #0a0a0a;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-    }
+    .chart-box { margin: 0 24px 16px; background: #0a0a0a; border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
     .metric-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-    .metric-tab {
-      padding: 5px 14px;
-      background: var(--bg3);
-      border: 1px solid #2a2a2a;
-      border-radius: 20px;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 12px;
-      font-family: 'DM Mono', monospace;
-      transition: all .2s;
-    }
+    .metric-tab { padding: 5px 14px; background: var(--bg3); border: 1px solid #2a2a2a; border-radius: 20px; color: var(--muted); cursor: pointer; font-size: 12px; font-family: 'DM Mono', monospace; transition: all .2s; }
     .metric-tab.active-views { background: var(--red); border-color: var(--red); color: #fff; }
     .metric-tab.active-likes { background: var(--pink); border-color: var(--pink); color: #fff; }
     .metric-tab.active-comments { background: var(--yellow); border-color: var(--yellow); color: #000; }
     canvas { max-height: 200px; }
-
-    .table-wrap {
-      margin: 0 24px 24px;
-      background: #0a0a0a;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .table-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-    }
+    .table-wrap { margin: 0 24px 24px; background: #0a0a0a; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .table-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); }
     .table-title { font-size: 13px; font-weight: 500; }
-    .csv-btn {
-      padding: 5px 12px;
-      background: #0a1a0a;
-      border: 1px solid #1a3a1a;
-      border-radius: 6px;
-      color: #5fba5f;
-      cursor: pointer;
-      font-size: 12px;
-      font-family: 'DM Mono', monospace;
-      transition: all .2s;
-    }
+    .csv-btn { padding: 5px 12px; background: #0a1a0a; border: 1px solid #1a3a1a; border-radius: 6px; color: #5fba5f; cursor: pointer; font-size: 12px; font-family: 'DM Mono', monospace; transition: all .2s; }
     .csv-btn:hover { background: #0f2a0f; }
     .table-scroll { max-height: 320px; overflow-y: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    thead th {
-      padding: 8px 12px; color: var(--muted);
-      font-weight: 500; text-align: left;
-      border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; background: #0a0a0a;
-    }
+    thead th { padding: 8px 12px; color: var(--muted); font-weight: 500; text-align: left; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #0a0a0a; }
     tbody td { padding: 7px 12px; border-bottom: 1px solid #111; }
     tbody tr:nth-child(even) { background: #0d0d0d; }
     .center-msg { text-align: center; padding: 32px; color: var(--muted); font-size: 13px; }
@@ -342,7 +91,6 @@
 </head>
 <body>
 
-<!-- SETUP -->
 <div id="setup-screen">
   <div class="setup-card">
     <div class="setup-logo">▶</div>
@@ -354,7 +102,6 @@
   </div>
 </div>
 
-<!-- MAIN -->
 <div id="app">
   <div class="topbar">
     <div class="logo"><span>▶</span> YT Tracker</div>
@@ -372,7 +119,6 @@
   <div class="footer">우클릭으로 CSV 다운로드 · 삭제 가능 · 서버에서 1시간마다 자동 수집</div>
 </div>
 
-<!-- DETAIL -->
 <div id="detail-screen">
   <div class="detail-header">
     <button class="back-btn" onclick="showMain()">← 목록으로</button>
@@ -416,7 +162,6 @@
   </div>
 </div>
 
-<!-- Context Menu -->
 <div class="ctx-menu" id="ctx-menu">
   <div class="ctx-item" onclick="ctxDownload()">📥 CSV 다운로드</div>
   <div class="ctx-item" onclick="ctxDetail()">📊 통계 보기</div>
@@ -439,14 +184,14 @@
     if (n >= 1_000) return (n/1_000).toFixed(1)+'K';
     return Number(n).toLocaleString();
   };
-const fmtDate = s => {
+
+  const fmtDate = s => {
     if (!s) return '';
     const d = new Date(s);
     const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
     return `${kst.getMonth()+1}/${kst.getDate()} ${String(kst.getHours()).padStart(2,'0')}:00`;
   };
 
-  // ── INIT ──
   window.onload = () => {
     const saved = localStorage.getItem('yt-tracker-server');
     if (saved) { SERVER = saved; showApp(); loadVideos(); }
@@ -491,7 +236,6 @@ const fmtDate = s => {
     setTimeout(() => el.style.display = 'none', 4000);
   }
 
-  // ── VIDEOS ──
   async function loadVideos() {
     try {
       const res = await fetch(`${SERVER}/videos`);
@@ -545,22 +289,18 @@ const fmtDate = s => {
     finally { document.getElementById('add-btn').disabled = false; }
   }
 
-  // ── DETAIL ──
   async function openDetail(videoId) {
     const v = videos.find(x => x.video_id === videoId);
     if (!v) return;
     currentVideo = v;
-
     document.getElementById('d-title').textContent = v.title;
     document.getElementById('d-channel').textContent = v.channel;
     document.getElementById('d-views').textContent = fmt(v.views);
     document.getElementById('d-likes').textContent = fmt(v.likes);
     document.getElementById('d-comments').textContent = fmt(v.comments);
-
     document.getElementById('app').style.display = 'none';
     document.getElementById('detail-screen').style.display = 'block';
     document.getElementById('history-tbody').innerHTML = '<tr><td colspan="4" class="center-msg">불러오는 중...</td></tr>';
-
     try {
       const res = await fetch(`${SERVER}/videos/${videoId}/history?limit=336`);
       const data = await res.json();
@@ -578,7 +318,7 @@ const fmtDate = s => {
     }
     tbody.innerHTML = [...currentHistory].reverse().map(s => `
       <tr>
-        <td>${(s.captured_at||'').replace('T',' ').slice(0,16)}</td>
+        <td>${fmtDate(s.captured_at)}</td>
         <td style="color:#ff2020">${Number(s.views).toLocaleString()}</td>
         <td style="color:#ff6b6b">${Number(s.likes).toLocaleString()}</td>
         <td style="color:#ffd93d">${Number(s.comments).toLocaleString()}</td>
@@ -592,11 +332,9 @@ const fmtDate = s => {
       canvas.style.display = 'none'; msg.style.display = 'block'; return;
     }
     canvas.style.display = 'block'; msg.style.display = 'none';
-
     const labels = currentHistory.map(s => fmtDate(s.captured_at));
     const colors = { views: '#ff2020', likes: '#ff6b6b', comments: '#ffd93d' };
     const dataMap = { views: currentHistory.map(s=>s.views), likes: currentHistory.map(s=>s.likes), comments: currentHistory.map(s=>s.comments) };
-
     if (chart) chart.destroy();
     chart = new Chart(canvas, {
       type: 'line',
@@ -607,10 +345,7 @@ const fmtDate = s => {
           data: dataMap[currentMetric],
           borderColor: colors[currentMetric],
           backgroundColor: colors[currentMetric] + '22',
-          borderWidth: 2,
-          pointRadius: 0,
-          tension: 0.3,
-          fill: true,
+          borderWidth: 2, pointRadius: 0, tension: 0.3, fill: true,
         }]
       },
       options: {
@@ -631,11 +366,10 @@ const fmtDate = s => {
     renderChart();
   }
 
-  // ── CSV ──
   function downloadCSV() {
     if (!currentVideo || !currentHistory.length) return;
     const header = '날짜/시간,조회수,좋아요,댓글\n';
-    const rows = currentHistory.map(s => `"${s.captured_at}",${s.views},${s.likes},${s.comments}`).join('\n');
+    const rows = currentHistory.map(s => `"${fmtDate(s.captured_at)}",${s.views},${s.likes},${s.comments}`).join('\n');
     const blob = new Blob(['\uFEFF' + header + rows], {type: 'text/csv;charset=utf-8;'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -643,7 +377,6 @@ const fmtDate = s => {
     a.click();
   }
 
-  // ── CONTEXT MENU ──
   function openCtx(e, videoId) {
     e.preventDefault();
     ctxTarget = videos.find(v => v.video_id === videoId);
@@ -661,7 +394,7 @@ const fmtDate = s => {
     const data = await res.json();
     const v = ctxTarget;
     const header = '날짜/시간,조회수,좋아요,댓글\n';
-    const rows = (data.snapshots||[]).map(s => `"${s.captured_at}",${s.views},${s.likes},${s.comments}`).join('\n');
+    const rows = (data.snapshots||[]).map(s => `"${fmtDate(s.captured_at)}",${s.views},${s.likes},${s.comments}`).join('\n');
     const blob = new Blob(['\uFEFF' + header + rows], {type: 'text/csv;charset=utf-8;'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
